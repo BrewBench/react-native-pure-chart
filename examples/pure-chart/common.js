@@ -64,18 +64,18 @@ function getMaxValue (data) {
   return Math.max.apply(null, values)
 }
 
-export const initData = (dataProp, height, gap, numberOfPoints = 5) => {
+export const initData = (dataProp, height, gap, numberOfPoints = 5, decimals = 0) => {
   let guideArray, max, sortedData
   if (!dataProp || !Array.isArray(dataProp) || dataProp.length === 0) {
     return {
       sortedData: [],
       max: 0,
-      guideArray: []
+      guideArray: [],
     }
   }
 
   max = Math.max(getMaxValue(dataProp))
-  guideArray = getGuideArray(max, height, numberOfPoints)
+  guideArray = getGuideArray(max, height, numberOfPoints, decimals)
 
   dataProp = flattenData(dataProp)
 
@@ -89,7 +89,7 @@ export const initData = (dataProp, height, gap, numberOfPoints = 5) => {
     scrollPosition: 0,
     nowX: 0,
     nowY: 0,
-    guideArray: guideArray
+    guideArray: guideArray,
   }
 }
 
@@ -177,7 +177,7 @@ export const refineData = (flattenData, max, height, gap) => {
   return result
 }
 
-export const getGuideArray = (max, height, numberOfPoints = 5) => {
+export const getGuideArray = (max, height, numberOfPoints = 5, decimals = 0) => {
   let x = parseInt(max)
 
   let arr = []
@@ -220,7 +220,9 @@ export const getGuideArray = (max, height, numberOfPoints = 5) => {
 
   for (let i = 1; i < numberOfPoints + 1; i++) {
     let v = x / numberOfPoints * i
-    arr.push([v + postfix, v * temp / max * height, 1 * temp / max * height])
+    arr.push([(decimals ? v.toFixed(decimals) : v) + postfix,
+      v * temp / max * height,
+      1 * temp / max * height])
   }
 
   return arr

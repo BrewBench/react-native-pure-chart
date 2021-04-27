@@ -9,7 +9,8 @@ class LineChart extends React.Component {
       this.props.data, 
       this.props.height, 
       this.props.gap, 
-      this.props.numberOfYAxisGuideLine)
+      this.props.numberOfYAxisGuideLine,
+      this.props.decimals)
     this.state = {
       loading: false,
       sortedData: newState.sortedData,
@@ -22,7 +23,7 @@ class LineChart extends React.Component {
       max: newState.max,
       lineThickness: (this.props.lineThickness > 10)? 10 : this.props.lineThickness,
       fadeAnim: new Animated.Value(0),
-      guideArray: newState.guideArray
+      guideArray: newState.guideArray,
     }
     this.scrollView = null
 
@@ -62,7 +63,7 @@ class LineChart extends React.Component {
     if (nextProps.data !== this.props.data) {
       this.setState(Object.assign({
         fadeAnim: new Animated.Value(0)
-      }, initData(nextProps.data, this.props.height, this.props.gap, this.props.numberOfYAxisGuideLine)), () => {
+      }, initData(nextProps.data, this.props.height, this.props.gap, this.props.numberOfYAxisGuideLine, this.props.decimals)), () => {
         Animated.timing(this.state.fadeAnim, { toValue: 1, easing: Easing.bounce, duration: 1000, useNativeDriver: true }).start()
       })
     }
@@ -118,7 +119,7 @@ class LineChart extends React.Component {
             }, styles.lineBox, lineStyle])} />
           <View style={StyleSheet.flatten([styles.absolute, {
             height: height - Math.abs(dy) - 2,
-            backgroundColor: lastCoordinate ? '#FFFFFF00' : backgroundColor,
+            backgroundColor: lastCoordinate ? '#FFFFFF00' : backgroundColor,            
             marginTop: Math.abs(dy) + 2
             }])} />
         </View>
@@ -401,7 +402,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   yAxisLabelsWrapper: {
-    paddingRight: 5
+    paddingRight: 5,
   },
   chartViewWrapper: {
     flexDirection: 'row',
