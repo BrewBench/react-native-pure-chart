@@ -79,7 +79,7 @@ export const initData = (dataProp, height, gap, numberOfPoints = 5, decimals = 0
 
   dataProp = flattenData(dataProp)
 
-  sortedData = refineData(dataProp, max, height, gap)
+  sortedData = refineData(dataProp, max, height, gap, decimals)
   return {
     sortedData: sortedData,
     max: max,
@@ -93,7 +93,7 @@ export const initData = (dataProp, height, gap, numberOfPoints = 5, decimals = 0
   }
 }
 
-export const refineData = (flattenData, max, height, gap) => {
+export const refineData = (flattenData, max, height, gap, decimals) => {
   let result = []
 
   flattenData.map((series) => {
@@ -114,14 +114,16 @@ export const refineData = (flattenData, max, height, gap) => {
         maxClone = 1
       }
       let dataObject = {}
-
+      
       if (typeof dataProp[i] === 'number') {
         simpleTypeCount++
         dataObject.ratioY = dataProp[i] / maxClone * height
         dataObject.y = dataProp[i]
         dataObject = {
           gap: i * gap,
-          ratioY: dataProp[i] / maxClone * height,
+          ratioY: (decimals && decimals === 3)
+            ? ((dataProp[i] * 100 - 100)+1) * 13.513513513513514 
+            : dataProp[i] / maxClone * height,
           y: dataProp[i]
         }
       } else if (typeof dataProp[i] === 'object') {
@@ -146,7 +148,9 @@ export const refineData = (flattenData, max, height, gap) => {
           objectTypeCount++
           dataObject = {
             gap: i * gap,
-            ratioY: dataProp[i].y / maxClone * height,
+            ratioY: (decimals && decimals === 3)
+              ? ((dataProp[i].y * 100 - 100)+1) * 13.513513513513514 
+              : dataProp[i].y / maxClone * height,
             x: dataProp[i].x,
             y: dataProp[i].y,
             isEmpty: isEmpty
@@ -178,7 +182,7 @@ export const refineData = (flattenData, max, height, gap) => {
 }
 
 export const getGuideArray = (max, height, numberOfPoints = 5, decimals = 0) => {
-  let x = parseInt(max)
+  let x = parseFloat(max)
 
   let arr = []
   let length
@@ -208,7 +212,7 @@ export const getGuideArray = (max, height, numberOfPoints = 5, decimals = 0) => 
   length = x.toString().length
 
   x = _.round(x, -1 * length + 1) / 10
-  let first = parseInt(x.toString()[0])
+  let first = parseFloat(x.toString()[0])
 
   if (first > -1 && first < 3) { // 1,2
     x = 2.5 * x / first
@@ -218,13 +222,24 @@ export const getGuideArray = (max, height, numberOfPoints = 5, decimals = 0) => 
     x = 10 * x / first
   }
 
-  for (let i = 1; i < numberOfPoints + 1; i++) {
-    let v = x / numberOfPoints * i
-    arr.push([(decimals ? v.toFixed(decimals) : v) + postfix,
-      v * temp / max * height,
-      1 * temp / max * height])
+  if (decimals && decimals === 3) {
+    let start = 0.99
+    for (let i = 1; i < numberOfPoints + 1; i++) {
+      let v = x / numberOfPoints * i
+      start += 0.010
+      arr.push([start.toFixed(3),
+        13.513513513513514*i  ,
+        1.3513513513513513])
+    }
+  } else {
+    for (let i = 1; i < numberOfPoints + 1; i++) {
+      let v = x / numberOfPoints * i
+      arr.push([v + postfix,
+        v * temp / max * height,
+        1 * temp / max * height])
+    } 
   }
-
+  console.log(arr)
   return arr
 }
 
