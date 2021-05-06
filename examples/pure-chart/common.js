@@ -239,7 +239,6 @@ export const getGuideArray = (max, height, numberOfPoints = 5, decimals = 0) => 
         1 * temp / max * height])
     } 
   }
-  console.log(arr)
   return arr
 }
 
