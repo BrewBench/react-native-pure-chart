@@ -122,7 +122,7 @@ export const refineData = (flattenData, max, height, gap, decimals) => {
         dataObject = {
           gap: i * gap,
           ratioY: (decimals && decimals === 3)
-            ? ((dataProp[i] * 100 - 100)+1) * 13.513513513513514 
+            ? ((dataProp[i] * 100 - 100)) * 13.513513513513514 
             : dataProp[i] / maxClone * height,
           y: dataProp[i]
         }
@@ -149,7 +149,7 @@ export const refineData = (flattenData, max, height, gap, decimals) => {
           dataObject = {
             gap: i * gap,
             ratioY: (decimals && decimals === 3)
-              ? ((dataProp[i].y * 100 - 100)+1) * 13.513513513513514 
+              ? ((dataProp[i].y * 100 - 100)) * 13.513513513513514 
               : dataProp[i].y / maxClone * height,
             x: dataProp[i].x,
             y: dataProp[i].y,
@@ -223,7 +223,7 @@ export const getGuideArray = (max, height, numberOfPoints = 5, decimals = 0) => 
   }
 
   if (decimals && decimals === 3) {
-    let start = 0.99
+    let start = 1.000
     for (let i = 1; i < numberOfPoints + 1; i++) {
       let v = x / numberOfPoints * i
       start += 0.010
